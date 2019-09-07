@@ -1,9 +1,11 @@
 from flask import Flask, request
 from array import array
-from flask import g
-
+from flask import g=
+import threading
 
 app = Flask(__name__)
+threadLock = threading.Lock()
+
 
 # define some arrays to store distances for each sensor
 sensorOne  = array('q')
@@ -97,7 +99,9 @@ def spot_taken():
     print("Count: " + str(sensorOneCount))
 
     #set_sensorOneCount(sensorOneCount + 1)
-    sensorOneCount = sensorOneCount + 1
+    with threadLock:
+        sensorOneCount = sensorOneCount + 1
+        
     set_sensorOneState(sensorOneState + 1)
     return str(get_sensorOneState())
 
