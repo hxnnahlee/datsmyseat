@@ -4,9 +4,6 @@ from flask import g
 import threading
 
 app = Flask(__name__)
-threadLock = threading.Lock()
-
-
 # define some arrays to store distances for each sensor
 sensorOne  = array('q')
 sensorTwo = array('q')
@@ -17,7 +14,7 @@ for i in range(20):
     sensorTwo.append(0)
     sensorThree.append(0)
 
-sensorOneCount = 0
+sensorOneCount = AtomicCounter()
 sensorTwoCount = 0
 senorThreeCount = 0
 
@@ -86,77 +83,120 @@ def index():
 ## server on http://0.0.0.0:5000/
 ## visible across the network
 ## BaseUrl for Android http://<your ip address>:5000/spots/<spots>
+@app.route('/spots/1', methods = ['POST'])
+def spot_taken():
+    currentDistance = int(request.data.decode("utf-8"))
+    #sensorOneCount = get_sensorOneCount()
+    sensorOneState = get_sensorOneState()
+    global sensorOneCount 
 
-# POST route for sensor #1
-with threadLock:
-    @app.route('/spots/1', methods = ['POST'])
-    def spot_taken():
-        currentDistance = int(request.data.decode("utf-8"))
-        #sensorOneCount = get_sensorOneCount()
-        sensorOneState = get_sensorOneState()
-        global sensorOneCount 
+    #print("State: " + str(get_sensorOneState()))
 
-        #print("State: " + str(get_sensorOneState()))
+    sensorOneCount.increment()
+    print(sensorOneCount.value())
+    #sensorOneCount = sensorOneCount + 1
 
-        print(sensorOneCount)
-        sensorOneCount = sensorOneCount + 1
+    set_sensorOneState(sensorOneState + 1)
 
-        set_sensorOneState(sensorOneState + 1)
-
-        return str(get_sensorOneState())
+    return str(get_sensorOneState())
 
 
-    """
-        # Person is currently not in the seat
-        if int(sensorOneState) == 0:
-            if currentDistance < 300:
-                set_sensorOneState(1)
-                sensorOne[sensorOneCount] = currentDistance
-                set_sensorOneCount(sensorOneCount + 1)
+"""
+    # Person is currently not in the seat
+    if int(sensorOneState) == 0:
+        if currentDistance < 300:
+            set_sensorOneState(1)
+            sensorOne[sensorOneCount] = currentDistance
+            set_sensorOneCount(sensorOneCount + 1)
 
-        # Person might not be in the seat
-        elif int(sensorOneState) == 1:
+    # Person might not be in the seat
+    elif int(sensorOneState) == 1:
 
-            # We recorded 20 calls, time to make a state transition decision
-            if sensorOneCount == 20:
-                sensorOne.sort()
-                medianDistance = sensorOne[10]
+        # We recorded 20 calls, time to make a state transition decision
+        if sensorOneCount == 20:
+            sensorOne.sort()
+            medianDistance = sensorOne[10]
 
-                # Person probably walked pass the sensor
-                if medianDistance > 300:
-                    set_sensorOneState(0)
-                    set_sensorOneCount(0)
+            # Person probably walked pass the sensor
+            if medianDistance > 300:
+                set_sensorOneState(0)
+                set_sensorOneCount(0)
 
-                # There is a person in the seat now
-                else:
-                    set_sensorOneState(2)
-                    set_sensorOneCount(0)
+            # There is a person in the seat now
+            else:
+                set_sensorOneState(2)
+                set_sensorOneCount(0)
+
+        else:
+            sensorOne[sensorOneCount] = currentDistance
+            set_sensorOneCount(sensorOneCount + 1)
+
+    # Person is in the seat 
+    elif sensorOneState == 2:
+        if currentDistance > 300:
+            set_sensorOneState(3)
+            sensorOne[sensorOneCount] = currentDistance
+            set_sensorOneCount(sensorOneCount + 1)
+
+    # Person might be in the seat
+    elif sensorOneState == 3:
+
+        # We recorded 20 calls, time to make a state transition decision
+        if sensorOneCount == 20:
+            if medianDistance < 300:
+                set_sensorOneState(2)
+                set_sensorOneCount(0)
 
             else:
-                sensorOne[sensorOneCount] = currentDistance
-                set_sensorOneCount(sensorOneCount + 1)
+                set_sensorOneState(0)
+                set_sensorOneCount(0)
 
-        # Person is in the seat 
-        elif sensorOneState == 2:
-            if currentDistance > 300:
-                set_sensorOneState(3)
-                sensorOne[sensorOneCount] = currentDistance
-                set_sensorOneCount(sensorOneCount + 1)
+    print("Count: " + str(get_sensorOneCount()))
 
-        # Person might be in the seat
-        elif sensorOneState == 3:
+    """
+    #return str(get_sensorOneState())
 
-            # We recorded 20 calls, time to make a state transition decision
-            if sensorOneCount == 20:
-                if medianDistance < 300:
-                    set_sensorOneState(2)
-                    set_sensorOneCount(0)
 
-                else:
-                    set_sensorOneState(0)
-                    set_sensorOneCount(0)
+class AtomicCounter:
+    """An atomic, thread-safe incrementing counter.
+    >>> counter = AtomicCounter()
+    >>> counter.increment()
+    1
+    >>> counter.increment(4)
+    5
+    >>> counter = AtomicCounter(42.5)
+    >>> counter.value
+    42.5
+    >>> counter.increment(0.5)
+    43.0
+    >>> counter = AtomicCounter()
+    >>> def incrementor():
+    ...     for i in range(100000):
+    ...         counter.increment()
+    >>> threads = []
+    >>> for i in range(4):
+    ...     thread = threading.Thread(target=incrementor)
+    ...     thread.start()
+    ...     threads.append(thread)
+    >>> for thread in threads:
+    ...     thread.join()
+    >>> counter.value
+    400000
+    """
+    def __init__(self, initial=0):
+        """Initialize a new atomic counter to given initial value (default 0)."""
+        self.value = initial
+        self._lock = threading.Lock()
 
-        print("Count: " + str(get_sensorOneCount()))
-
+    def increment(self, num=1):
+        """Atomically increment the counter by num (default 1) and return the
+        new value.
         """
-        #return str(get_sensorOneState())
+        with self._lock:
+            self.value += num
+            return self.value
+
+
+if __name__ == '__main__':
+    import doctest
+    doctest.testmod()
