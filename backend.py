@@ -15,8 +15,7 @@ def index():
 @app.route('/spots/<spot>', methods = ['POST'])
 def spot_taken(spot):
 
-    item = request.args.get('taken')
-    return item
+    return request.data
 
 #if __name__ == "__main__":
 #    app.run()
