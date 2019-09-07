@@ -16,7 +16,7 @@ def index():
 def spot_taken(spot):
 
     to_string = request.data.decode("utf-8")
-    print(to_string)
+    print(to_string + "Hello")
     
     return to_string
 
