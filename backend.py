@@ -84,7 +84,7 @@ def index():
 # POST route for sensor #1
 @app.route('/spots/1', methods = ['POST'])
 def spot_taken():
-    currentDistance = request.data.decode("utf-8")
+    currentDistance = int(request.data.decode("utf-8"))
     sensorOneCount = get_sensorOneCount()
     sensorOneState = get_sensorOneState()
 
