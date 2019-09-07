@@ -88,15 +88,17 @@ def spot_taken():
     sensorOneCount = get_sensorOneCount()
     sensorOneState = get_sensorOneState()
 
+    print("State: " + str(get_sensorOneState()))
+
     # Person is currently not in the seat
-    if sensorOneState == 0:
+    if int(sensorOneState) == 0:
         if currentDistance < 300:
             set_sensorOneState(1)
             sensorOne[sensorOneCount] = currentDistance
             set_sensorOneCount(sensorOneCount + 1)
 
     # Person might not be in the seat
-    elif sensorOneState == 1:
+    elif int(sensorOneState) == 1:
 
         # We recorded 20 calls, time to make a state transition decision
         if sensorOneCount == 20:
