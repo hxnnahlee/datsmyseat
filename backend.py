@@ -100,6 +100,7 @@ def spot_taken():
 
         # We recorded 20 calls, time to make a state transition decision
         if sensorOneCount == 20:
+            sensorOne.sort()
             medianDistance = sensorOne[10]
 
             # Person probably walked pass the sensor
@@ -111,6 +112,13 @@ def spot_taken():
             else:
                 set_sensorOneState(2)
                 set_sensorOneCount(0)
+
+        else:
+            sensorOne[sensorOneCount] = currentDistance
+            set_sensorOneCount(sensorOneCount + 1)
+
+        print("Count: " + get_sensorOneCount)
+
 
     # Person is in the seat 
     elif sensorOneState == 2:
