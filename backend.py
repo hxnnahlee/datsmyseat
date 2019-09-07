@@ -15,7 +15,11 @@ def index():
 @app.route('/spots/<spot>', methods = ['POST'])
 def spot_taken(spot):
 
-    return (request.data + "Hello from App!")
+    return ''''<form method="POST">
+                  Language: <input type="text" name="language"><br>
+                  Framework: <input type="text" name="framework"><br>
+                  <input type="submit" value="Submit"><br>
+              </form>'''
 
 #if __name__ == "__main__":
 #    app.run()
