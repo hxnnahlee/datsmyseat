@@ -1,5 +1,7 @@
 from flask import Flask, request
 from array import array
+from flask import g
+
 
 app = Flask(__name__)
 
@@ -13,8 +15,6 @@ for i in range(20):
     sensorTwo.append(0)
     sensorThree.append(0)
 
-
-sensorOneCount = 0
 sensorTwoCount = 0
 senorThreeCount = 0
 
@@ -23,12 +23,35 @@ senorThreeCount = 0
 #   1 for semi-out
 #   2 for in  
 #   3 for semi-in
-sensorOneState = 0
 sensorTwoState = 0
 sensorThreeState = 0
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
+
+def get_sensorOneCount():
+    sensorOneCount = getattr(g, '_sensorOneCount', None)
+    if sensorOneCount is None:
+        g._sensorOneCount = 0
+
+    return g._sensorOneCount
+
+def set_sensorOneCount(newValue):
+    sensorOneCount = get_sensorOneCount()
+    sensorOneCount = newValue
+    setattr(g, '_sensorOneCount', sensorOneCount)
+
+def get_sensorOneState():
+    sensorOneState = getattr(g, '_sensorOneState', None)
+    if sensorOneState is None:
+        g._sensorOneState = 0
+
+    return g._sensorOneState
+
+def set_sensorOneState(newValue):
+    sensorOneState = get_sensorOneState()
+    sensorOneState = newValue
+    setattr(g, '_sensorOneState', sensorOneState)
 
 # root
 @app.route("/")
@@ -62,13 +85,15 @@ def index():
 @app.route('/spots/1', methods = ['POST'])
 def spot_taken():
     currentDistance = request.data.decode("utf-8")
+    sensorOneCount = get_sensorOneCount()
+    sensorOneState = get_sensorOneState()
 
     # Person is currently not in the seat
     if sensorOneState == 0:
         if currentDistance < 300:
-            sensorOneState = 1
+            set_sensorOneState(1)
             sensorOne[sensorOneCount] = currentDistance
-            sensorOneCount += 1
+            set_sensorOneCount(sensorOneCount + 1)
 
     # Person might not be in the seat
     elif sensorOneState == 1:
@@ -79,20 +104,20 @@ def spot_taken():
 
             # Person probably walked pass the sensor
             if medianDistance > 300:
-                sensorOneState = 0
-                sensorOneCount = 0
+                set_sensorOneState(0)
+                set_sensorOneCount(0)
 
             # There is a person in the seat now
             else:
-                sensorOneState = 2
-                sensorOneCount = 0
+                set_sensorOneState(2)
+                set_sensorOneCount(0)
 
     # Person is in the seat 
     elif sensorOneState == 2:
         if currentDistance > 300:
-            sensorOneState = 3
+            set_sensorOneState(3)
             sensorOne[sensorOneCount] = currentDistance
-            sensorOneCount += 1
+            set_sensorOneCount(sensorOneCount + 1)
 
     # Person might be in the seat
     elif sensorOneState == 3:
@@ -100,11 +125,11 @@ def spot_taken():
         # We recorded 20 calls, time to make a state transition decision
         if sensorOneCount == 20:
             if medianDistance < 300:
-                sensorOneState = 2
-                sensorOneCount = 0
+                set_sensorOneState(2)
+                set_sensorOneCount(0)
 
             else:
-                sensorOneState = 0
-                sensorOneCount = 0
+                set_sensorOneState(0)
+                set_sensorOneCount(0)
 
-    return sensorOneState
+    return get_sensorOneState()
