@@ -60,7 +60,7 @@ def index():
 
 # POST route for sensor #1
 @app.route('/spots/1', methods = ['POST'])
-def spot_taken(spot):
+def spot_taken():
     currentDistance = request.data.decode("utf-8")
 
     # Person is currently not in the seat
