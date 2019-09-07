@@ -90,6 +90,8 @@ def index():
 # POST route for sensor #1
 @app.route('/spots/1', methods = ['POST'])
 def spot_taken():
+    threadLock.acquire()
+
     currentDistance = int(request.data.decode("utf-8"))
     #sensorOneCount = get_sensorOneCount()
     sensorOneState = get_sensorOneState()
@@ -97,11 +99,12 @@ def spot_taken():
 
     #print("State: " + str(get_sensorOneState()))
 
-    with threadLock:
-        print("Count: " + str(sensorOneCount))
-        sensorOneCount = sensorOneCount + 1
+    print(sensorOneCount)
+    sensorOneCount = sensorOneCount + 1
 
     set_sensorOneState(sensorOneState + 1)
+
+    threadLock.release()
     return str(get_sensorOneState())
 
 
