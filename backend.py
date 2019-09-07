@@ -117,9 +117,6 @@ def spot_taken():
             sensorOne[sensorOneCount] = currentDistance
             set_sensorOneCount(sensorOneCount + 1)
 
-        print("Count: " + get_sensorOneCount)
-
-
     # Person is in the seat 
     elif sensorOneState == 2:
         if currentDistance > 300:
@@ -140,4 +137,5 @@ def spot_taken():
                 set_sensorOneState(0)
                 set_sensorOneCount(0)
 
+    print("Count: " + get_sensorOneCount)
     return str(get_sensorOneState())
