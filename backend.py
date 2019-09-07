@@ -1,6 +1,6 @@
 from flask import Flask, request
 from array import array
-from flask import g=
+from flask import g
 import threading
 
 app = Flask(__name__)
@@ -101,7 +101,7 @@ def spot_taken():
     #set_sensorOneCount(sensorOneCount + 1)
     with threadLock:
         sensorOneCount = sensorOneCount + 1
-        
+
     set_sensorOneState(sensorOneState + 1)
     return str(get_sensorOneState())
 
