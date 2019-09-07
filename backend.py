@@ -15,6 +15,7 @@ for i in range(20):
     sensorTwo.append(0)
     sensorThree.append(0)
 
+sensorOneCount = 0
 sensorTwoCount = 0
 senorThreeCount = 0
 
@@ -88,13 +89,14 @@ def index():
 @app.route('/spots/1', methods = ['POST'])
 def spot_taken():
     currentDistance = int(request.data.decode("utf-8"))
-    sensorOneCount = get_sensorOneCount()
+    #sensorOneCount = get_sensorOneCount()
     sensorOneState = get_sensorOneState()
 
     print("State: " + str(get_sensorOneState()))
-    print("Count: " + str(get_sensorOneCount()))
+    print("Count: " + str(sensorOneCount))
 
-    set_sensorOneCount(sensorOneCount + 1)
+    #set_sensorOneCount(sensorOneCount + 1)
+    sensorOneCount = sensorOneCount + 1
     set_sensorOneState(sensorOneState + 1)
     return str(get_sensorOneState())
 
