@@ -40,13 +40,13 @@ def index():
     return "DATS MY SEAT!!"
 
 # POST
-@app.route('/spots/<spot>', methods = ['POST'])
-def spot_taken(spot):
+#@app.route('/spots/<spot>', methods = ['POST'])
+#def spot_taken(spot):
 
-    to_string = request.data.decode("utf-8")
-    print(to_string + "Hello")
+#    to_string = request.data.decode("utf-8")
+#    print(to_string + "Hello")
     
-    return to_string
+#    return to_string
 
 #if __name__ == "__main__":
 #    app.run()
