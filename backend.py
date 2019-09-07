@@ -47,7 +47,7 @@ if __name__ == '__main__':
     import doctest
     doctest.testmod()
 
-    
+
 app = Flask(__name__)
 # define some arrays to store distances for each sensor
 sensorOne  = array('q')
@@ -138,7 +138,7 @@ def spot_taken():
     #print("State: " + str(get_sensorOneState()))
 
     sensorOneCount.increment()
-    print(sensorOneCount.value())
+    print(sensorOneCount.value)
     #sensorOneCount = sensorOneCount + 1
 
     set_sensorOneState(sensorOneState + 1)
