@@ -95,11 +95,10 @@ def spot_taken():
     sensorOneState = get_sensorOneState()
     global sensorOneCount 
 
-    print("State: " + str(get_sensorOneState()))
-    print("Count: " + str(sensorOneCount))
+    #print("State: " + str(get_sensorOneState()))
 
-    #set_sensorOneCount(sensorOneCount + 1)
     with threadLock:
+        print("Count: " + str(sensorOneCount))
         sensorOneCount = sensorOneCount + 1
 
     set_sensorOneState(sensorOneState + 1)
