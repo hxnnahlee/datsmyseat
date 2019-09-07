@@ -9,17 +9,13 @@ def index():
     this is a root dir of my server
     :return: str
     """
-    return "This is root!!!!"
+    return "DATS MY SEAT!!!"
 
 # GET
 @app.route('/spots/<spot>', methods = ['POST'])
 def spot_taken(spot):
 
-    return ''''<form method="POST">
-                  Language: <input type="text" name="language"><br>
-                  Framework: <input type="text" name="framework"><br>
-                  <input type="submit" value="Submit"><br>
-              </form>'''
+    return request.data
 
 #if __name__ == "__main__":
 #    app.run()
