@@ -11,11 +11,12 @@ def index():
     """
     return "DATS MY SEAT!!"
 
-# GET
+# POST
 @app.route('/spots/<spot>', methods = ['POST'])
 def spot_taken(spot):
 
-    return '''HELLO'''
+    item = request.args.get('taken')
+    return item
 
 #if __name__ == "__main__":
 #    app.run()
