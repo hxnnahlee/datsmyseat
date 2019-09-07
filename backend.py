@@ -53,6 +53,9 @@ def set_sensorOneState(newValue):
     sensorOneState = newValue
     setattr(g, '_sensorOneState', sensorOneState)
 
+    return g._sensorOneState
+
+
 # root
 @app.route("/")
 def index():
@@ -89,7 +92,14 @@ def spot_taken():
     sensorOneState = get_sensorOneState()
 
     print("State: " + str(get_sensorOneState()))
+    print("Count: " + str(get_sensorOneCount()))
 
+    set_sensorOneCount(sensorOneCount + 1)
+    set_sensorOneState(sensorOneState + 1)
+    return str(get_sensorOneState())
+
+
+"""
     # Person is currently not in the seat
     if int(sensorOneState) == 0:
         if currentDistance < 300:
@@ -140,4 +150,6 @@ def spot_taken():
                 set_sensorOneCount(0)
 
     print("Count: " + str(get_sensorOneCount()))
-    return str(get_sensorOneState())
+
+    """
+    #return str(get_sensorOneState())
