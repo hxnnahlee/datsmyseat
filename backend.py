@@ -132,4 +132,4 @@ def spot_taken():
                 set_sensorOneState(0)
                 set_sensorOneCount(0)
 
-    return get_sensorOneState()
+    return str(get_sensorOneState())
