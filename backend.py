@@ -137,5 +137,5 @@ def spot_taken():
                 set_sensorOneState(0)
                 set_sensorOneCount(0)
 
-    print("Count: " + get_sensorOneCount())
+    print("Count: " + str(get_sensorOneCount()))
     return str(get_sensorOneState())
