@@ -91,6 +91,7 @@ def spot_taken():
     currentDistance = int(request.data.decode("utf-8"))
     #sensorOneCount = get_sensorOneCount()
     sensorOneState = get_sensorOneState()
+    global sensorOneCount 
 
     print("State: " + str(get_sensorOneState()))
     print("Count: " + str(sensorOneCount))
