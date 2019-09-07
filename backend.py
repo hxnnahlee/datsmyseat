@@ -15,7 +15,11 @@ def index():
 @app.route('/spots/<spot>', methods = ['POST'])
 def spot_taken(spot):
 
-    return request.data
+    to_string = request.data.decode("utf-8")
+    print(to_string)
+    sys.stdout.flush()
+    
+    return to_string
 
 #if __name__ == "__main__":
 #    app.run()
