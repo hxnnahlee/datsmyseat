@@ -4,3 +4,5 @@ target/*
 .settings
 .idea
 .metadata
+*.jar
+*.tgz
