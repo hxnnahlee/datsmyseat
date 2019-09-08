@@ -141,7 +141,7 @@ public class App {
                     Arrays.sort(sensorOne);
                     mediumDistance = sensorOne[4];
 
-                    if (mediumDistance > 300) {
+                    if (mediumDistance > 100) {
                         sensorOneState = 0;
                         sensorOneCounter = 0;
                     }
@@ -162,7 +162,7 @@ public class App {
 
             // You are in the chair
             else if (sensorOneState == 2) {
-                if (currentDistance > 130) {
+                if (currentDistance > 100) {
                     sensorOneState = 3;
                     sensorOne[sensorOneCounter] = currentDistance;
                     sensorOneCounter++;
@@ -179,7 +179,7 @@ public class App {
                     Arrays.sort(sensorOne);
                     mediumDistance = sensorOne[4];
 
-                    if (mediumDistance < 300) {
+                    if (mediumDistance < 100) {
                         sensorOneState = 2;
                         sensorOneCounter = 0;
                     }
@@ -230,7 +230,7 @@ public class App {
                     Arrays.sort(sensorTwo);
                     mediumDistance = sensorTwo[4];
 
-                    if (mediumDistance > 300) {
+                    if (mediumDistance > 100) {
                         sensorTwoState = 0;
                         sensorTwoCounter = 0;
                     }
@@ -268,7 +268,7 @@ public class App {
                     Arrays.sort(sensorTwo);
                     mediumDistance = sensorTwo[4];
 
-                    if (mediumDistance < 300) {
+                    if (mediumDistance < 100) {
                         sensorTwoState = 2;
                         sensorTwoCounter = 0;
                     }
@@ -301,7 +301,7 @@ public class App {
 
             // When you are not in the seat
             if (sensorThreeState == 0) {
-                if (currentDistance < 300) {
+                if (currentDistance < 100) {
                     sensorThreeState = 1;
                     sensorThree[sensorThreeCounter] = currentDistance;
                     sensorThreeCounter++;
@@ -318,7 +318,7 @@ public class App {
                     Arrays.sort(sensorThree);
                     mediumDistance = sensorTwo[4];
 
-                    if (mediumDistance > 300) {
+                    if (mediumDistance > 100) {
                         sensorThreeState = 0;
                         sensorThreeCounter = 0;
                     }
@@ -339,7 +339,7 @@ public class App {
 
             // You are in the chair
             else if (sensorThreeState == 2) {
-                if (currentDistance > 300) {
+                if (currentDistance > 100) {
                     sensorThreeState = 3;
                     sensorThree[sensorThreeCounter] = currentDistance;
                     sensorThreeCounter++;
@@ -356,7 +356,7 @@ public class App {
                     Arrays.sort(sensorThree);
                     mediumDistance = sensorThree[4];
 
-                    if (mediumDistance < 300) {
+                    if (mediumDistance < 100) {
                         sensorThreeState = 2;
                         sensorThreeCounter = 0;
                     }
