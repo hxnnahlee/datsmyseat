@@ -1,28 +1,47 @@
 import static spark.Spark.*;
 
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Arrays;
+import com.google.gson.Gson;
+import Database.SensorData;
 
 public class App {
-    
-    //static int sensorOneCounter = 0;
-    //static int sensorTwoCounter = 0;
-    //static int sensorThreeCounter = 0;
+
+    // static int sensorOneCounter = 0;
+    // static int sensorTwoCounter = 0;
+    // static int sensorThreeCounter = 0;
 
     static int[] sensorOne = new int[15];
     static int[] sensorTwo = new int[15];
     static int[] sensorThree = new int[15];
 
-    //static int sensorOneState = 0;
-    //static int sensorTwoState = 0;
-    //static int sensorThreeState = 0;
-    
+    // static int sensorOneState = 0;
+    // static int sensorTwoState = 0;
+    // static int sensorThreeState = 0;
+
+    static boolean trigger = false;
+
     public static void main(String[] args) {
         port(getHerokuAssignedPort());
+        final Gson gson = new Gson();
 
         // Establish a connection to our postgres database
         final Database dataBase = Database.getDatabase();
 
         get("/hello", (req, res) -> "Hello Heroku World");
+
+        get("/sensor", (request, response) -> {
+            return gson.toJson(dataBase.selectAllSensors());
+        });
+
+        get("/twilio", (request, response) -> {
+            System.out.println("Triggeredddddd");
+            trigger = true;
+            return null;
+        });
 
         post("/sensor", (request, response) -> {
 
@@ -114,10 +133,9 @@ public class App {
             return null;
         });
 
-        
-        //route for posting tags to comments
+        // route for posting tags to comments
         post("/sensor/1", (request, response) -> {
-           
+
             int currentDistance = Integer.parseInt(request.body());
             int sensorOneState = dataBase.selectSensor(1).state;
             int sensorOneCounter = dataBase.selectSensor(1).count;
@@ -201,12 +219,17 @@ public class App {
             dataBase.updateCount(1, sensorOneCounter);
             dataBase.updateState(1, sensorOneState);
 
+            if (trigger && isThereSpace(dataBase)) {
+                System.out.println("Sending text....");
+                contactTwilio();
+                trigger = false;
+            }
             return sensorOneState;
         });
 
-        //route for posting tags to comments
+        // route for posting tags to comments
         post("/sensor/2", (request, response) -> {
-           
+
             int currentDistance = Integer.parseInt(request.body());
             int sensorTwoState = dataBase.selectSensor(2).state;
             int sensorTwoCounter = dataBase.selectSensor(2).count;
@@ -292,9 +315,9 @@ public class App {
             return sensorTwoState;
         });
 
-        //route for posting tags to comments
+        // route for posting tags to comments
         post("/sensor/3", (request, response) -> {
-           
+
             int currentDistance = Integer.parseInt(request.body());
             int sensorThreeState = dataBase.selectSensor(3).state;
             int sensorThreeCounter = dataBase.selectSensor(3).count;
@@ -379,6 +402,31 @@ public class App {
 
             return sensorThreeState;
         });
+    }
+
+    public static boolean isThereSpace(Database dataBase) {
+        int count = 0;
+
+        for (Database.SensorData data : dataBase.selectAllSensors()) {
+            if (data.getState() <= 1)
+                count++;
+        }
+
+        if (count >= 2)
+            return true;
+
+        else
+            return false;
+    }
+
+    public static void contactTwilio() throws IOException {
+        URL url;
+        url = new URL("https://unitingdust.api.stdlib.com/treehacks2019@dev/?tel=7183167019&option=OPEN");
+       
+        HttpURLConnection con = (HttpURLConnection) url.openConnection();
+        con.setRequestMethod("GET");
+        con.getResponseCode();
+        con.disconnect();
     }
 
     static int getHerokuAssignedPort() {
