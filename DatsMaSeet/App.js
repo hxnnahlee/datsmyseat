@@ -1,5 +1,6 @@
 import * as WebBrowser from 'expo-web-browser';
 import React, {Component} from 'react';
+import ImageOverlay from "react-native-image-overlay";
 import {
   Image,
   Platform,
@@ -10,6 +11,7 @@ import {
   View,
   Button,
 } from 'react-native';
+
 
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { createStackNavigator, createAppContainer } from 'react-navigation'; // Version can be specified in package.json
@@ -24,10 +26,10 @@ class HomeScreen extends React.Component {
           <Image
             source={
               __DEV__
-                ? require('./logo2.png')
+                ? require('./logo3.png')
                 : require('./assets/images/robot-prod.png')
             }
-            style={{width: 300, height: 200}}
+            style={{width: 260, height: 260}}
           />
         </View>
 
@@ -96,11 +98,13 @@ class HomeScreen extends React.Component {
 class FmlScreen extends React.Component {
   render() {
     return (
+      <View style={styles.mainContainer}>
 
       <ScrollView>
       <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-        <Text>Fml Screen</Text>
-        <View style={styles.welcomeContainer}>
+        
+          <Text style={styles.textContainer}>Pick a floor to continue</Text>
+        <View style={styles.pictureContainer}>
           <Image
             source={
               __DEV__
@@ -111,12 +115,15 @@ class FmlScreen extends React.Component {
           />
         </View>
           
-        
+         <View style={styles.buttonContainer}>
         <Button
           title="Cafe"
-          onPress={() => this.props.navigation.navigate('Fml')}
+          onPress={() => this.props.navigation.navigate('Floor')}
         />
-         <View style={styles.welcomeContainer}>
+        </View>
+
+
+         <View style={styles.pictureContainer}>
           <Image
             source={
               __DEV__
@@ -127,13 +134,14 @@ class FmlScreen extends React.Component {
           />
         </View>
           
-        
+        <View style={styles.buttonContainer}>
         <Button
           title="First Floor"
           onPress={() => this.props.navigation.navigate('Fml')}
         />
+        </View>
 
-         <View style={styles.welcomeContainer}>
+         <View style={styles.pictureContainer}>
           <Image
             source={
               __DEV__
@@ -144,24 +152,184 @@ class FmlScreen extends React.Component {
           />
         </View>
           
-
+        <View style={styles.buttonContainer}>
         <Button
           title="Second Floor"
           onPress={() => this.props.navigation.navigate('Fml')}
         />
+        </View>
 
       </View>
 
 
       </ScrollView>
+      </View>
     );
   }
 }
+
+function takesJson(json) {
+  //console.log("hello");
+  console.log(json);
+  if (json.state <= 1)
+  {
+    return true;
+  }
+  else return false;
+}
+
+class FloorScreen extends React.Component {
+
+
+  render() {
+
+    //arrayOfJson = getSeats2FromApi();
+    //console.log(arrayOfJson)
+    //seat1Open = takesJson(arrayOfJson[0])
+    return (
+      <View style={styles.mainContainer}>
+
+      <ScrollView>
+      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+
+
+        <ImageOverlay
+          source={ __DEV__
+                ? require('./fmlcafe.png')
+                : require('./assets/images/robot-prod.png')}
+           
+          contentPosition="bottom">
+
+            <View>
+                
+                <Text style={styles.textContainer}>Welcome to the Cafe</Text>
+                
+            </View>
+
+        </ImageOverlay>
+        
+          <Text style={styles.textContainer}>Pick a seat to continue</Text>
+        <View style={styles.floorPictureContainer}>
+          <Image
+            source={
+              __DEV__
+                ? require('./desks2.png')
+                : require('./assets/images/robot-prod.png')
+            }
+            style={{width: 400, height: 800}}
+          />
+        </View>
+          
+         <View style={styles.buttonContainer}>
+        <Button
+          title="Seat1"
+          onPress={() => this.props.navigation.navigate('Seat')}
+        />
+        </View>
+
+        <View style={styles.buttonContainer}>
+        <Button
+          title="Seat2"
+          onPress={() => this.props.navigation.navigate('Seat')}
+        />
+        </View>
+
+        <View style={styles.buttonContainer}>
+        <Button
+          title="Seat3"
+          onPress={() => this.props.navigation.navigate('Seat')}
+        />
+        </View>
+
+
+      </View>
+
+
+      </ScrollView>
+      </View>
+    );
+  }
+}
+
+
+   function getSeatsFromApi() {
+     return fetch('http://pennapps19-myseat.herokuapp.com/sensor')
+    .then((response) => response.json())
+    .then((responseJson) => {
+      return responseJson;
+    })
+    .catch((error) => {
+      console.error(error);
+    });
+    }
+
+  async function getSeats2FromApi() {
+  try {
+    let response = await fetch(
+      'https://pennapps10-myseat.herokuapp.com/sensor',
+    );
+    let responseJson = await response.json();
+    return responseJson.state;
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+var allData = {
+  1: true,
+  2: false,
+  3: false
+}
+
+class StateColor extends Component {
+  render() {
+    return (
+      <View
+        style={{
+          alignItems: 'center',
+          justifyContent: 'center',
+          ...styles.square,
+          backgroundColor: this.props.isRed ? 'red' : 'green'
+        }}
+      />
+    );
+  }
+}
+
+class SeatScreen extends React.Component {
+
+  getData = (id) => allData[id]
+
+  render() {
+    var chairIds = [
+      1, 2, 3, 4
+    ]
+
+
+    return (
+      <View>
+      <View>
+        <Text style={styles.welcome}>das my seat</Text>
+        </View>
+        <View style ={{flex: 1, flexDirection: 'row', textAlign: 'center', justifyContent: 'center', marginTop: 100}}>
+        <StateColor key={chairIds[0]} isRed={this.getData(chairIds[0])}>
+          </StateColor>
+        <StateColor key={chairIds[1]} isRed={this.getData(chairIds[1])}>
+          </StateColor>
+      </View>
+      </View>
+    );
+  }
+}
+
+
 
 const RootStack = createStackNavigator(
   {
     Home: HomeScreen,
     Fml: FmlScreen,
+    Floor: FloorScreen,
+    Seat: SeatScreen,
   },
   {
     initialRouteName: 'Home',
@@ -187,6 +355,12 @@ const styles = StyleSheet.create({
     // Set hex color code here.
     backgroundColor: '#808080',
   },
+  floorContainer:{
+       flex: 1,
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'flex-end',
+  },
   bigBlue: {
     color: 'blue',
     fontWeight: 'bold',
@@ -206,6 +380,19 @@ const styles = StyleSheet.create({
     fontSize: 14,
     lineHeight: 19,
     textAlign: 'center',
+  },
+  floorPictureContainer:{
+     backgroundColor: 'steelblue',
+    borderColor: 'white',
+    borderWidth: 0,
+    borderRadius: 5,
+    color: 'skyblue',
+    fontSize: 18,
+    fontWeight: 'bold',
+    overflow: 'hidden',
+    padding: 12,
+    textAlign:'center',
+
   },
   pictureContainer:{
      backgroundColor: 'steelblue',
